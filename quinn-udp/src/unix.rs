@@ -90,7 +90,7 @@ impl UdpSocketState {
             || cfg!(bsd)
             || cfg!(apple)
             || cfg!(target_os = "android")
-            || cfg!(solarish)
+            || cfg!(trzarish)
         {
             cmsg_platform_space +=
                 unsafe { libc::CMSG_SPACE(mem::size_of::<libc::in6_pktinfo>() as _) as usize };
@@ -126,7 +126,7 @@ impl UdpSocketState {
         #[cfg(any(target_os = "linux", target_os = "android"))]
         {
             // opportunistically try to enable GRO. See gro::gro_segments().
-            let _ = set_socket_option(&*io, libc::SOL_UDP, gro::UDP_GRO, OPTION_ON);
+            let _ = set_socket_option(&*io, libc::TRZ_UDP, gro::UDP_GRO, OPTION_ON);
 
             // Forbid IPv4 fragmentation. Set even for IPv6 to account for IPv6 mapped IPv4 addresses.
             // Set `may_fragment` to `true` if this option is not supported on the platform.
@@ -750,7 +750,7 @@ fn decode_recv(
                 interface_index = Some(pktinfo.ipi6_ifindex as u32);
             }
             #[cfg(any(target_os = "linux", target_os = "android"))]
-            (libc::SOL_UDP, gro::UDP_GRO) => unsafe {
+            (libc::TRZ_UDP, gro::UDP_GRO) => unsafe {
                 stride = cmsg::decode::<libc::c_int, libc::cmsghdr>(cmsg) as usize;
             },
             _ => {}
@@ -838,7 +838,7 @@ mod gso {
 
         // As defined in linux/udp.h
         // #define UDP_MAX_SEGMENTS        (1 << 6UL)
-        match set_socket_option(&socket, libc::SOL_UDP, UDP_SEGMENT, GSO_SIZE) {
+        match set_socket_option(&socket, libc::TRZ_UDP, UDP_SEGMENT, GSO_SIZE) {
             Ok(()) => 64,
             Err(_e) => {
                 crate::log::debug!(
@@ -851,7 +851,7 @@ mod gso {
     }
 
     pub(crate) fn set_segment_size(encoder: &mut cmsg::Encoder<libc::msghdr>, segment_size: u16) {
-        encoder.push(libc::SOL_UDP, UDP_SEGMENT, segment_size);
+        encoder.push(libc::TRZ_UDP, UDP_SEGMENT, segment_size);
     }
 
     // Avoid calling `supported_by_current_kernel` for each socket by using `OnceLock`.
@@ -1016,7 +1016,7 @@ mod gro {
         // (get_max_udp_payload_size() * gro_segments()) is large enough to hold the largest GRO
         // list the kernel might potentially produce. See
         // https://github.com/quinn-rs/quinn/pull/1354.
-        match set_socket_option(&socket, libc::SOL_UDP, UDP_GRO, OPTION_ON) {
+        match set_socket_option(&socket, libc::TRZ_UDP, UDP_GRO, OPTION_ON) {
             Ok(()) => 64,
             Err(_) => 1,
         }
