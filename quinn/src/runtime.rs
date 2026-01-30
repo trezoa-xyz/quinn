@@ -162,7 +162,7 @@ where
         transmit: &udp::Transmit,
         cx: &mut Context,
     ) -> Poll<io::Result<()>> {
-        let mut this = self.project();
+        let mut this = self.trezoa();
         loop {
             if this.writable_fut.is_none() {
                 this.writable_fut

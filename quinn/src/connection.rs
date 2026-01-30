@@ -665,7 +665,7 @@ pin_project! {
 impl Future for OpenUni<'_> {
     type Output = Result<SendStream, ConnectionError>;
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
-        let this = self.project();
+        let this = self.trezoa();
         let (conn, id, is_0rtt) = ready!(poll_open(ctx, this.conn, this.notify, Dir::Uni))?;
         Poll::Ready(Ok(SendStream::new(conn, id, is_0rtt)))
     }
@@ -683,7 +683,7 @@ pin_project! {
 impl Future for OpenBi<'_> {
     type Output = Result<(SendStream, RecvStream), ConnectionError>;
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
-        let this = self.project();
+        let this = self.trezoa();
         let (conn, id, is_0rtt) = ready!(poll_open(ctx, this.conn, this.notify, Dir::Bi))?;
 
         Poll::Ready(Ok((
@@ -732,7 +732,7 @@ impl Future for AcceptUni<'_> {
     type Output = Result<RecvStream, ConnectionError>;
 
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
-        let this = self.project();
+        let this = self.trezoa();
         let (conn, id, is_0rtt) = ready!(poll_accept(ctx, this.conn, this.notify, Dir::Uni))?;
         Poll::Ready(Ok(RecvStream::new(conn, id, is_0rtt)))
     }
@@ -751,7 +751,7 @@ impl Future for AcceptBi<'_> {
     type Output = Result<(SendStream, RecvStream), ConnectionError>;
 
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
-        let this = self.project();
+        let this = self.trezoa();
         let (conn, id, is_0rtt) = ready!(poll_accept(ctx, this.conn, this.notify, Dir::Bi))?;
         Poll::Ready(Ok((
             SendStream::new(conn.clone(), id, is_0rtt),
@@ -799,7 +799,7 @@ pin_project! {
 impl Future for ReadDatagram<'_> {
     type Output = Result<Bytes, ConnectionError>;
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
-        let mut this = self.project();
+        let mut this = self.trezoa();
         let mut state = this.conn.state.lock("ReadDatagram::poll");
         // Check for buffered datagrams before checking `state.error` so that already-received
         // datagrams, which are necessarily finite, can be drained from a closed connection.
@@ -834,7 +834,7 @@ pin_project! {
 impl Future for SendDatagram<'_> {
     type Output = Result<(), SendDatagramError>;
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
-        let mut this = self.project();
+        let mut this = self.trezoa();
         let mut state = this.conn.state.lock("SendDatagram::poll");
         if let Some(ref e) = state.error {
             return Poll::Ready(Err(SendDatagramError::ConnectionLost(e.clone())));

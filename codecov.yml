@@ -1,5 +1,5 @@
 coverage:
   status:
     patch: off
-    project: off
+    trezoa: off
   range: "50..100"

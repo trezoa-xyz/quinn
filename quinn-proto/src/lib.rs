@@ -4,7 +4,7 @@
 //! no networking code and does not get any relevant timestamps from the operating system. Most
 //! users may want to use the futures-based quinn API instead.
 //!
-//! The quinn-proto API might be of interest if you want to use it from a C or C++ project
+//! The quinn-proto API might be of interest if you want to use it from a C or C++ trezoa
 //! through C bindings or if you want to use a different event loop than the one tokio provides.
 //!
 //! The most important types are `Endpoint`, which conceptually represents the protocol state for

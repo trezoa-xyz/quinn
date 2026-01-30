@@ -678,7 +678,7 @@ pin_project! {
 impl Future for Accept<'_> {
     type Output = Option<Incoming>;
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
-        let mut this = self.project();
+        let mut this = self.trezoa();
         let mut endpoint = this.endpoint.inner.state.lock().unwrap();
         if endpoint.driver_lost {
             return Poll::Ready(None);

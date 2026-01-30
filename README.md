@@ -10,10 +10,10 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE-APACHE)
 
 Quinn is a pure-Rust, async-compatible implementation of the IETF [QUIC][quic] transport protocol.
-The project was founded by [Dirkjan Ochtman](https://github.com/djc) and
-[Benjamin Saunders](https://github.com/Ralith) as a side project in 2018, and has seen more than
+The trezoa was founded by [Dirkjan Ochtman](https://github.com/djc) and
+[Benjamin Saunders](https://github.com/Ralith) as a side trezoa in 2018, and has seen more than
 30 releases since then. If you're using Quinn in a commercial setting, please consider
-[sponsoring](https://opencollective.com/quinn-rs) the project.
+[sponsoring](https://opencollective.com/quinn-rs) the trezoa.
 
 ## Features
 
